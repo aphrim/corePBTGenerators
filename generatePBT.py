@@ -181,7 +181,7 @@ class pbtGenerator:
 
 
 
-
-myPBT = pbtGenerator({"templateName": 'EpicPythonGeneratedTemplate'})
-myPBT.addMesh('testMesh', 'sm_cube_002', {"position": [100,200,300], "rotation": None, "scale": None, "parentId": None})
-print(myPBT.generatePBT())
+#Example Usage
+#myPBT = pbtGenerator({"templateName": 'EpicPythonGeneratedTemplate'})
+#myPBT.addMesh('testMesh', 'sm_cube_002', {"position": [100,200,300], "rotation": None, "scale": None, "parentId": None})
+#print(myPBT.generatePBT())
