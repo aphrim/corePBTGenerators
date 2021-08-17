@@ -5,12 +5,12 @@ def generateId():
 
 class Object:
     def __init__(self, tableParams):
-        self.name = tableParams["name"]
-        self.position = tableParams["position"]
-        self.rotation = tableParams["rotation"]
-        self.scale = tableParams["scale"]
-        self.parentId = tableParams["parentId"]
-        self.meshId = tableParams["meshId"]
+        self.name = tableParams.get("name")
+        self.position = tableParams.get("position")
+        self.rotation = tableParams.get("rotation")
+        self.scale = tableParams.get("scale")
+        self.parentId = tableParams.get("parentId")
+        self.meshId = tableParams.get("meshId")
         self.id = generateId()
 
 class pbtGenerator:
@@ -23,20 +23,20 @@ class pbtGenerator:
     
     def getMeshIdForName(self, meshName):
         for mesh in self.meshIds:
-            if (mesh.name == meshName):
-                return mesh.id
+            if (mesh.get("name") == meshName):
+                return mesh.get("id")
         newMeshId = {"id": generateId(), "name": meshName}
         self.meshIds.append(newMeshId)
-        return newMeshId
+        return newMeshId["id"]
     
     def addMesh(self, name, meshName, tableParams):
         meshToAdd = Object(
         {
             "name": name,
-            "position": tableParams["position"],
-            "rotation": tableParams["rotation"],
-            "scale": tableParams["scale"],
-            "parentId": tableParams["parentId"],
+            "position": tableParams.get("position"),
+            "rotation": tableParams.get("rotation"),
+            "scale": tableParams.get("scale"),
+            "parentId": tableParams.get("parentId"),
             "meshId": self.getMeshIdForName(meshName),
             "id": generateId()
         })
@@ -45,13 +45,13 @@ class pbtGenerator:
             meshToAdd.parentId = self.rootId
 
         if (meshToAdd.position is None):
-            meshToAdd.position = [0,0,0]
+            meshToAdd.position = {"X" : 0, "Y" : 0, "Z" : 0}
 
         if (meshToAdd.rotation is None):
-            meshToAdd.rotation = [0,0,0]
+            meshToAdd.rotation = {"X" : 0, "Y" : 0, "Z" : 0}
 
         if (meshToAdd.scale is None):
-            meshToAdd.scale = [1,1,1]
+            meshToAdd.scale = {"X" : 0, "Y" : 0, "Z" : 0}
         
         self.objects.append(meshToAdd)
         return meshToAdd
@@ -59,7 +59,7 @@ class pbtGenerator:
     def childrenToString(self):
         childrenString = ""
         for object in self.objects:
-            childrenString += "\n ChildIds: " + object.id
+            childrenString += "ChildIds: " + object.id + "\n"
         return childrenString
 
     def allObjectsPBT(self):
@@ -72,19 +72,19 @@ class pbtGenerator:
                                 Name: "{object.name}"
                                 Transform {{
                                     Location {{
-                                        X: {object.position[0]}
-                                        Y: {object.position[1]}
-                                        Z: {object.position[2]}
+                                        X: {object.position["X"]}
+                                        Y: {object.position["Y"]}
+                                        Z: {object.position["Z"]}
                                     }}
                                     Rotation {{
-                                        Pitch: {object.rotation[0]}
-                                        Yaw: {object.rotation[1]}
-                                        Roll: {object.rotation[2]}
+                                        Pitch: {object.rotation["X"]}
+                                        Yaw: {object.rotation["Y"]}
+                                        Roll: {object.rotation["Z"]}
                                     }}
                                     Scale {{
-                                        X: {object.scale[0]}
-                                        Y: {object.scale[1]}
-                                        Z: {object.scale[2]}
+                                        X: {object.scale["X"]}
+                                        Y: {object.scale["Y"]}
+                                        Z: {object.scale["Z"]}
                                     }}
                                 }}
                                 ParentId: {self.rootId}    
@@ -102,7 +102,7 @@ class pbtGenerator:
                                 }}
                                 CoreMesh {{
                                     MeshAsset {{
-                                        Id: {object.meshId['id']}
+                                        Id: {object.meshId}
                                     }}
                                     Teams {{
                                         IsTeamCollisionEnabled: true
@@ -121,7 +121,7 @@ class pbtGenerator:
             allObjectsString += objectString
         return allObjectsString
 
-    def objectAssetsPBT(self):     
+    def objectAssetsPBT(self):      
         assetsString = ""
         for meshId in self.meshIds:
             meshAssetString = f'''
@@ -181,7 +181,4 @@ class pbtGenerator:
 
 
 
-#Example Usage
-#myPBT = pbtGenerator({"templateName": 'EpicPythonGeneratedTemplate'})
-#myPBT.addMesh('testMesh', 'sm_cube_002', {"position": [100,200,300], "rotation": None, "scale": None, "parentId": None})
-#print(myPBT.generatePBT())
+
